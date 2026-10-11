@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#ff5b1f">
+<title>DevOps Hub — Learn by Doing</title>
+<meta name="description" content="Master DevOps tools and technologies through hands-on, learn-by-doing exercises.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+
+<style>
+:root {
+  --bg: #0a0a0b;
+  --bg-elev: #131316;
+  --surface: rgba(20, 20, 24, 0.7);
+  --surface-2: rgba(28, 28, 34, 0.8);
+  --accent: #ff5b1f;
+  --accent-2: #ffb800;
+  --accent-3: #00d4ff;
+  --green: #00d97e;
+  --primary: #ffffff;
+  --secondary: #a0a0a8;
+  --tertiary: #6a6a72;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --glass: blur(24px) saturate(180%);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-lg: 28px;
+  --shadow: 0 10px 40px rgba(0,0,0,0.4);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.6);
+}
+
+[data-theme="light"] {
+  --bg: #fafafa;
+  --bg-elev: #ffffff;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-2: rgba(245, 245, 250, 0.9);
+  --primary: #0a0a0b;
+  --secondary: #4a4a52;
+  --tertiary: #8a8a92;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-feature-settings: "cv11", "ss01";
+  overflow-x: hidden;
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at top left, rgba(255, 91, 31, 0.12), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(0, 212, 255, 0.08), transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ===== HEADER ===== */
+header {
+  position: fixed; top: 0; width: 100%; z-index: 100;
+  padding: 0.9rem 5%;
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--surface);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  display: flex; align-items: center; gap: 8px;
+  font-weight: 900; font-size: 1.05rem;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  user-select: none;
+}
+.logo-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.header-actions { display: flex; gap: 6px; align-items: center; }
+
+.icon-btn {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--primary);
+  transition: all 0.2s ease;
+  position: relative;
+}
+.icon-btn:hover { transform: scale(1.05); border-color: var(--accent); }
+.icon-btn:active { transform: scale(0.95); }
+.icon-btn .badge {
+  position: absolute; top: -2px; right: -2px;
+  background: var(--accent);
+  color: white;
+  font-size: 9px; font-weight: 800;
+  min-width: 18px; height: 18px;
+  padding: 0 4px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 100px;
+  border: 2px solid var(--bg-elev);
+}
+
+/* ===== SEARCH OVERLAY ===== */
+.search-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 80px 5% 20px;
+}
+.search-overlay.active { display: flex; }
+
+.search-box {
+  width: 100%; max-width: 600px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.search-input-wrap {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+}
+.search-input::placeholder { color: var(--tertiary); }
+.search-results {
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+.search-result {
+  padding: 12px 20px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+}
+.search-result:hover, .search-result.active {
+  background: var(--surface-2);
+  border-left-color: var(--accent);
+}
+.search-result-icon {
+  width: 32px; height: 32px;
+  background: var(--surface-2);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.search-result-text { flex: 1; min-width: 0; }
+.search-result-title { font-size: 14px; font-weight: 600; }
+.search-result-subtitle { font-size: 12px; color: var(--tertiary); margin-top: 2px; }
+.search-empty { padding: 40px 20px; text-align: center; color: var(--tertiary); font-size: 14px; }
+
+/* ===== MAIN CONTAINER ===== */
+.app {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 5% 120px;
+}
+
+/* ===== HERO ===== */
+.hero {
+  padding: 40px 0 32px;
+  position: relative;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  margin-bottom: 20px;
+}
+.hero-tag .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+.hero h1 {
+  font-size: clamp(2.2rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  margin-bottom: 16px;
+}
+.hero h1 .gradient {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.hero p {
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  color: var(--secondary);
+  max-width: 600px;
+  margin-bottom: 28px;
+}
+
+/* ===== PROGRESS STATS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 32px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  backdrop-filter: var(--glass);
+}
+.stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tertiary);
+  margin-bottom: 6px;
+  display: flex; align-items: center; gap: 6px;
+}
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.stat-value .suffix {
+  font-size: 0.9rem;
+  color: var(--tertiary);
+  font-weight: 600;
+}
+
+/* ===== FILTERS ===== */
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+.filter-chip:hover { color: var(--primary); border-color: var(--border-strong); }
+.filter-chip.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.filter-chip .count {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 100px;
+}
+.filter-chip:not(.active) .count {
+  background: var(--border);
+  color: var(--secondary);
+}
+
+/* ===== SECTION TITLE ===== */
+.section-title {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.section-title h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title h2 .icon-wrap {
+  width: 32px; height: 32px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+}
+.section-title .meta {
+  font-size: 12px;
+  color: var(--tertiary);
+  font-weight: 600;
+}
+
+/* ===== TOOL CARDS ===== */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: var(--glass);
+  position: relative;
+  overflow: hidden;
+}
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--card-color, var(--accent));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.tool-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+.tool-card:hover::before { opacity: 1; }
+
+.tool-card.completed { opacity: 0.85; }
+.tool-card.completed .card-icon { background: var(--green); color: white; }
+
+.card-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-icon {
+  width: 44px; height: 44px;
+  background: var(--card-color-bg, rgba(255, 91, 31, 0.15));
+  color: var(--card-color, var(--accent));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.card-bookmark {
+  width: 32px; height: 32px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--tertiary);
+  transition: all 0.2s ease;
+}
+.card-bookmark:hover { color: var(--accent); border-color: var(--accent); }
+.card-bookmark.active { color: var(--accent-2); border-color: var(--accent-2); background: rgba(255, 184, 0, 0.1); }
+
+.tool-card h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+.tool-card .desc {
+  font-size: 13px;
+  color: var(--secondary);
+  line-height: 1.5;
+  margin-bottom: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.meta-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--secondary);
+}
+.meta-tag.difficulty-beginner { color: var(--green); border-color: rgba(0, 217, 126, 0.3); background: rgba(0, 217, 126, 0.08); }
+.meta-tag.difficulty-intermediate { color: var(--accent-2); border-color: rgba(255, 184, 0, 0.3); background: rgba(255, 184, 0, 0.08); }
+.meta-tag.difficulty-advanced { color: var(--accent); border-color: rgba(255, 91, 31, 0.3); background: rgba(255, 91, 31, 0.08); }
+
+.card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px;
+  color: var(--tertiary);
+}
+.card-footer .time { display: flex; align-items: center; gap: 4px; }
+.card-footer .start-btn {
+  background: var(--card-color, var(--accent));
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.2s ease;
+}
+.card-footer .start-btn:hover { transform: scale(1.05); }
+
+.progress-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+.progress-text {
+  font-size: 11px;
+  color: var(--tertiary);
+  font-weight: 600;
+  margin-top: 6px;
+  display: flex; justify-content: space-between;
+}
+
+/* ===== DETAIL VIEW ===== */
+.detail-view {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg);
+  z-index: 150;
+  overflow-y: auto;
+  display: none;
+  animation: slideUp 0.3s ease;
+}
+.detail-view.active { display: block; }
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.detail-header {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  backdrop-filter: var(--glass);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 5%;
+  display: flex; align-items: center; justify-content: space-between;
+  z-index: 10;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--primary);
+  transition: all 0.2s ease;
+}
+.back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.detail-actions { display: flex; gap: 8px; }
+
+.detail-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 5% 120px;
+}
+
+.detail-hero {
+  margin-bottom: 32px;
+}
+.detail-hero .breadcrumb {
+  font-size: 12px;
+  color: var(--tertiary);
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.detail-hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.detail-hero .lead {
+  font-size: 1.05rem;
+  color: var(--secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.detail-hero .hero-meta {
+  display: flex; gap: 8px; flex-wrap: wrap;
+}
+
+/* ===== MARKDOWN STYLES ===== */
+.markdown {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--primary);
+}
+.markdown h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 40px 0 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.markdown h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+.markdown h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 32px 0 12px;
+  color: var(--primary);
+}
+.markdown h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 24px 0 8px;
+  color: var(--primary);
+}
+.markdown p { margin-bottom: 16px; color: var(--secondary); }
+.markdown strong { color: var(--primary); font-weight: 700; }
+.markdown em { font-style: italic; }
+.markdown ul, .markdown ol {
+  margin: 16px 0; padding-left: 24px;
+  color: var(--secondary);
+}
+.markdown li { margin-bottom: 8px; }
+.markdown li::marker { color: var(--accent); }
+.markdown blockquote {
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  padding: 16px 20px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 20px 0;
+  color: var(--primary);
+  font-style: italic;
+}
+.markdown blockquote p { color: var(--primary); margin: 0; }
+.markdown hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+.markdown a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--accent);
+  transition: all 0.2s ease;
+}
+.markdown a:hover { border-bottom-style: solid; }
+
+/* CODE BLOCKS */
+.code-block {
+  position: relative;
+  background: #0d0d11;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin: 16px 0;
+  overflow: hidden;
+}
+.code-block-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.code-block-lang {
+  display: flex; align-items: center; gap: 6px;
+}
+.code-block-dots {
+  display: flex; gap: 6px;
+  margin-right: 8px;
+}
+.code-block-dots span {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border-strong);
+}
+.copy-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--secondary);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.2s ease;
+}
+.copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+.copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+.code-block pre {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #e0e0e0;
+}
+.code-block code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+}
+.markdown :not(pre) > code {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  color: var(--accent-2);
+}
+
+/* TABLE */
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.markdown th, .markdown td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.markdown th {
+  background: var(--surface-2);
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.markdown tr:last-child td { border-bottom: none; }
+
+/* CHECKLIST */
+.checklist {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 20px 0;
+}
+.checklist-title {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--tertiary);
+}
+.checklist-progress {
+  font-size: 11px;
+  color: var(--accent);
+}
+.checklist-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+  user-select: none;
+}
+.checklist-item input[type="checkbox"] {
+  appearance: none;
+  width: 18px; height: 18px;
+  border: 2px solid var(--border-strong);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all 0.2s ease;
+}
+.checklist-item input[type="checkbox"]:checked {
+  background: var(--green);
+  border-color: var(--green);
+}
+.checklist-item input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+.checklist-item span {
+  font-size: 14px;
+  color: var(--secondary);
+  line-height: 1.5;
+}
+.checklist-item input:checked + span {
+  text-decoration: line-through;
+  color: var(--tertiary);
+}
+
+/* ===== BOTTOM NAV ===== */
+.tab-bar {
+  position: fixed;
+  bottom: 16px; left: 50%;
+  transform: translateX(-50%);
+  width: 92%; max-width: 480px;
+  height: 64px;
+  display: flex; justify-content: space-around; align-items: center;
+  border-radius: 100px;
+  z-index: 100;
+  background: var(--surface);
+  backdrop-filter: var(--glass);
+  -webkit-backdrop-filter: var(--glass);
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow-lg);
+  padding: 0 8px;
+}
+.tab-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: all 0.25s ease;
+  padding: 8px 14px;
+  border-radius: 100px;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.tab-item.active { opacity: 1; color: var(--accent); }
+.tab-item.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 91, 31, 0.12);
+  border-radius: 100px;
+  z-index: -1;
+}
+.tab-item span {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+/* ===== BOTTOM SHEET ===== */
+.sheet {
+  position: fixed;
+  bottom: -100%; left: 0; width: 100%;
+  background: var(--bg-elev);
+  border-top: 1px solid var(--border-strong);
+  border-radius: 32px 32px 0 0;
+  z-index: 250;
+  transition: bottom 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 12px 5% 32px;
+}
+.sheet.active { bottom: 0; box-shadow: 0 -20px 60px rgba(0,0,0,0.5); }
+.sheet-handle {
+  width: 40px; height: 4px;
+  background: var(--border-strong);
+  border-radius: 100px;
+  margin: 8px auto 24px;
+}
+.sheet-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.sheet-header h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.sheet-close {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--primary);
+}
+
+.sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 240;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.sheet-backdrop.active { opacity: 1; pointer-events: auto; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-elev);
+  border: 1px solid var(--border-strong);
+  border-radius: 100px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 300;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+.toast .toast-icon { color: var(--green); }
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--tertiary);
+}
+.empty-state svg { margin-bottom: 16px; opacity: 0.5; }
+.empty-state h3 { color: var(--primary); margin-bottom: 8px; }
+
+/* RESPONSIVE */
+@media (min-width: 768px) {
+  .bento-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; }
+  .stats-grid { grid-template-columns: repeat(4, 1fr); }
+  .tools-grid { grid-template-columns: repeat(2, 1fr); }
+  .app { padding: 80px 4% 120px; }
+  .detail-content { padding: 40px 4% 120px; }
+}
+
+@media (min-width: 1024px) {
+  .tools-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero { padding: 60px 0 40px; }
+}
+
+@media (max-width: 480px) {
+  .stat-value { font-size: 1.5rem; }
+  .stat-card { padding: 14px; }
+  .tool-card { padding: 16px; }
+  .tab-bar { height: 60px; }
+  .tab-item span { font-size: 8px; }
+}
+
+::selection { background: var(--accent); color: white; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo" onclick="goHome()">
+    <span class="logo-dot"></span>
+    <span>DEVOPS<span style="color: var(--accent);">HUB</span></span>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" onclick="openSearch()" aria-label="Search">
+      <i data-lucide="search" style="width:18px;height:18px"></i>
+    </button>
+    <button class="icon-btn" onclick="openBookmarks()" aria-label="Bookmarks">
+      <i data-lucide="bookmark" style="width:18px;height:18px"></i>
+      <span class="badge" id="bookmark-badge" style="display:none">0</span>
+    </button>
+    <button class="icon-btn" onclick="openSettings()" aria-label="Settings">
+      <i data-lucide="settings" style="width:18px;height:18px"></i>
+    </button>
+  </div>
+</header>
+
+<div class="search-overlay" id="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-box">
+    <div class="search-input-wrap">
+      <i data-lucide="search" style="width:20px;height:20px;color:var(--tertiary)"></i>
+      <input type="text" class="search-input" id="search-input" placeholder="Search tools, topics, commands..." autocomplete="off">
+      <kbd style="font-size:10px;padding:3px 6px;background:var(--surface-2);border:1px solid var(--border);border-radius:4px;color:var(--tertiary)">ESC</kbd>
+    </div>
+    <div class="search-results" id="search-results"></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="sheet-backdrop" onclick="closeAllSheets()"></div>
+
+<div class="sheet" id="bookmarks-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h3>Bookmarks</h3>
+    <button class="sheet-close" onclick="closeAllSheets()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+  </div>
+  <div id="bookmarks-list"></div>
+</div>
+
+<div class="sheet" id="settings-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <h3>Settings</h3>
+    <button class="sheet-close" onclick="closeAllSheets()"><i data-lucide="x" style="width:18px;height:18px"></i></button>
+  </div>
+  <div class="settings-section" style="margin-bottom:24px">
+    <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--tertiary);margin-bottom:12px;font-weight:700">Appearance</h4>
+    <div style="display:flex;gap:8px">
+      <button class="theme-btn" data-theme="dark" style="flex:1;padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;color:var(--primary);cursor:pointer;font-weight:600;font-size:13px">
+        <i data-lucide="moon" style="width:16px;height:16px;display:block;margin:0 auto 4px"></i> Dark
+      </button>
+      <button class="theme-btn" data-theme="light" style="flex:1;padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;color:var(--primary);cursor:pointer;font-weight:600;font-size:13px">
+        <i data-lucide="sun" style="width:16px;height:16px;display:block;margin:0 auto 4px"></i> Light
+      </button>
+    </div>
+  </div>
+  <div class="settings-section" style="margin-bottom:24px">
+    <h4 style="font-size:12px;text-transform:uppercase;letter-spacing:0.05em;color:var(--tertiary);margin-bottom:12px;font-weight:700">Data</h4>
+    <button onclick="exportData()" style="width:100%;padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;color:var(--primary);cursor:pointer;font-weight:600;font-size:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <i data-lucide="download" style="width:16px;height:16px"></i> Export Progress
+    </button>
+    <button onclick="resetProgress()" style="width:100%;padding:14px;background:rgba(255,91,31,0.1);border:1px solid rgba(255,91,31,0.3);border-radius:12px;color:var(--accent);cursor:pointer;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;gap:8px">
+      <i data-lucide="trash-2" style="width:16px;height:16px"></i> Reset All Progress
+    </button>
+  </div>
+  <div style="font-size:11px;color:var(--tertiary);text-align:center;padding-top:20px;border-top:1px solid var(--border)">
+    DevOps Hub v1.0 • Built for learners
+  </div>
+</div>
+
+<main class="app" id="main-app">
+  <section class="hero">
+    <div class="hero-tag">
+      <span class="dot"></span>
+      <span>Live Progress Sync</span>
+    </div>
+    <h1>Master DevOps<br><span class="gradient">by doing it.</span></h1>
+    <p>Hands-on tutorials for Linux, Docker, Kubernetes, AWS, Terraform, and more. Track your progress, bookmark favorites, and build real skills step by step.</p>
+  </section>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label"><i data-lucide="target" style="width:12px;height:12px"></i> Completed</div>
+      <div class="stat-value"><span id="stat-completed">0</span><span class="suffix"> / <span id="stat-total">0</span></span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i data-lucide="flame" style="width:12px;height:12px"></i> Streak</div>
+      <div class="stat-value"><span id="stat-streak">0</span><span class="suffix"> days</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i data-lucide="clock" style="width:12px;height:12px"></i> Time Left</div>
+      <div class="stat-value"><span id="stat-time">0</span><span class="suffix"> hrs</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label"><i data-lucide="trending-up" style="width:12px;height:12px"></i> Progress</div>
+      <div class="stat-value"><span id="stat-progress">0</span><span class="suffix">%</span></div>
+    </div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="section-title">
+    <h2><span class="icon-wrap"><i data-lucide="layers" style="width:16px;height:16px"></i></span> Learning Path</h2>
+    <div class="meta" id="tools-meta"></div>
+  </div>
+
+  <div class="tools-grid" id="tools-grid"></div>
+</main>
+
+<div class="detail-view" id="detail-view">
+  <div class="detail-header">
+    <button class="back-btn" onclick="closeDetail()">
+      <i data-lucide="arrow-left" style="width:16px;height:16px"></i>
+      <span>Back</span>
+    </button>
+    <div class="detail-actions">
+      <button class="icon-btn" id="detail-bookmark" onclick="toggleDetailBookmark()">
+        <i data-lucide="bookmark" style="width:18px;height:18px"></i>
+      </button>
+      <button class="icon-btn" onclick="completeCurrentTool()">
+        <i data-lucide="check-circle" style="width:18px;height:18px"></i>
+      </button>
+    </div>
+  </div>
+  <div class="detail-content" id="detail-content"></div>
+</div>
+
+<nav class="tab-bar">
+  <div class="tab-item active" data-tab="all" onclick="setFilter('all')">
+    <i data-lucide="home" style="width:20px;height:20px"></i>
+    <span>Home</span>
+  </div>
+  <div class="tab-item" data-tab="beginner" onclick="setFilter('beginner')">
+    <i data-lucide="sprout" style="width:20px;height:20px"></i>
+    <span>Basics</span>
+  </div>
+  <div class="tab-item" data-tab="in-progress" onclick="setFilter('in-progress')">
+    <i data-lucide="loader" style="width:20px;height:20px"></i>
+    <span>Active</span>
+  </div>
+  <div class="tab-item" data-tab="completed" onclick="setFilter('completed')">
+    <i data-lucide="trophy" style="width:20px;height:20px"></i>
+    <span>Done</span>
+  </div>
+</nav>
+
+<div class="toast" id="toast">
+  <i data-lucide="check-circle-2" class="toast-icon" style="width:16px;height:16px"></i>
+  <span id="toast-text">Copied!</span>
+</div>
+
+<script>
+// ============ STATE ============
+const STATE = {
+  tools: [],
+  progress: {},      // { toolId: { checklist: [bool], started, completed, lastVisited } }
+  bookmarks: [],
+  currentFilter: 'all',
+  currentToolId: null,
+  theme: 'dark',
+  streak: { count: 0, lastDate: null },
+};
+
+const CACHE_KEY = 'devops-hub-v1';
+
+// ============ STORAGE ============
+function loadState() {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      const data = JSON.parse(cached);
+      Object.assign(STATE, data);
+    }
+  } catch (e) { console.warn('Cache load failed', e); }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      progress: STATE.progress,
+      bookmarks: STATE.bookmarks,
+      theme: STATE.theme,
+      streak: STATE.streak,
+    }));
+  } catch (e) { console.warn('Cache save failed', e); }
+}
+
+// ============ FETCH & PARSE MARKDOWN ============
+async function loadContent() {
+  try {
+    const res = await fetch('main.md?_=' + Date.now());
+    if (!res.ok) throw new Error('Failed to load main.md');
+    const md = await res.text();
+    parseMarkdown(md);
+  } catch (e) {
+    console.error('Load error', e);
+    showInlineError(e.message);
+  }
+}
+
+function showInlineError(msg) {
+  document.getElementById('tools-grid').innerHTML = `
+    <div class="empty-state" style="grid-column:1/-1">
+      <i data-lucide="alert-circle" style="width:48px;height:48px"></i>
+      <h3>Couldn't load main.md</h3>
+      <p>${msg}<br>Make sure <code>main.md</code> is in the same folder as this HTML file.</p>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function parseMarkdown(md) {
+  const tools = [];
+  const sections = md.split(/^## /m).slice(1);
+
+  for (const section of sections) {
+    const lines = section.split('\n');
+    const titleLine = lines[0].trim();
+    const title = titleLine.replace(/^[^\w]*/, '').replace(/\s*\*\*/g, '');
+
+    let difficulty = 'intermediate', time = 10, icon = 'box', color = 'var(--accent)', colorBg = 'rgba(255, 91, 31, 0.15)';
+    const lower = title.toLowerCase();
+    if (lower.includes('linux') || lower.includes('git') || lower.includes('python')) { difficulty = 'beginner'; icon = 'terminal'; color = 'var(--green)'; colorBg = 'rgba(0, 217, 126, 0.15)'; }
+    else if (lower.includes('docker')) { icon = 'container'; color = 'var(--accent-3)'; colorBg = 'rgba(0, 212, 255, 0.15)'; }
+    else if (lower.includes('kubernetes') || lower.includes('helm')) { icon = 'box'; color = 'var(--accent-3)'; colorBg = 'rgba(0, 212, 255, 0.15)'; difficulty = 'advanced'; }
+    else if (lower.includes('jenkins') || lower.includes('gitlab')) { icon = 'git-branch'; color = 'var(--accent)'; colorBg = 'rgba(255, 91, 31, 0.15)'; }
+    else if (lower.includes('aws') || lower.includes('cloud')) { icon = 'cloud'; color = 'var(--accent-2)'; colorBg = 'rgba(255, 184, 0, 0.15)'; }
+    else if (lower.includes('terraform')) { icon = 'layers'; color = 'var(--accent)'; colorBg = 'rgba(255, 91, 31, 0.15)'; }
+    else if (lower.includes('ansible')) { icon = 'settings'; color = 'var(--accent)'; colorBg = 'rgba(255, 91, 31, 0.15)'; }
+    else if (lower.includes('prometheus') || lower.includes('grafana')) { icon = 'bar-chart-3'; color = 'var(--accent-2)'; colorBg = 'rgba(255, 184, 0, 0.15)'; }
+    else if (lower.includes('vault')) { icon = 'lock'; color = 'var(--accent-2)'; colorBg = 'rgba(255, 184, 0, 0.15)'; difficulty = 'advanced'; }
+    else if (lower.includes('python')) { icon = 'code'; }
+
+    const dm = section.match(/\*\*Difficulty:\*\*\s*(\w+)/i);
+    const tm = section.match(/\*\*Time:\*\*\s*([\d-]+)\s*hours?/i);
+    if (dm) difficulty = dm[1].toLowerCase();
+    if (tm) time = parseInt(tm[1].split('-')[0]) || 10;
+
+    const overviewMatch = section.match(/### Overview\s*\n+([\s\S]*?)(?=\n###)/);
+    const overview = overviewMatch ? overviewMatch[1].trim() : '';
+
+    const whyMatch = section.match(/### Why Learn This\s*\n+([\s\S]*?)(?=\n###)/);
+    const why = whyMatch ? whyMatch[1].trim() : '';
+
+    // Extract steps
+    const steps = [];
+    const stepRegex = /#### Step (\d+):([^\n]+)\n+([\s\S]*?)(?=\n####|\n###|\n---|\n##|$)/g;
+    let stepMatch;
+    while ((stepMatch = stepRegex.exec(section)) !== null) {
+      steps.push({
+        number: parseInt(stepMatch[1]),
+        title: stepMatch[2].trim(),
+        content: stepMatch[3].trim()
+      });
+    }
+
+    // Extract checklist items (numbered list items in Step 1 or "Practice Project" tasks)
+    const checklist = [];
+    const checkMatch = section.match(/### Practice Project\s*\n+([\s\S]*?)$/);
+    if (checkMatch) {
+      const items = checkMatch[1].match(/[-*]\s+([^\n]+)/g) || [];
+      items.forEach(item => {
+        checklist.push(item.replace(/^[-*]\s+/, '').trim());
+      });
+    }
+
+    tools.push({
+      id: title.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g, ''),
+      title,
+      icon,
+      color,
+      colorBg,
+      difficulty,
+      time,
+      overview,
+      why,
+      steps,
+      checklist,
+      content: section,
+    });
+  }
+
+  STATE.tools = tools;
+  render();
+}
+
+// ============ RENDER ============
+function render() {
+  renderStats();
+  renderFilters();
+  renderTools();
+  if (window.lucide) lucide.createIcons();
+}
+
+function renderStats() {
+  const total = STATE.tools.length;
+  const completed = STATE.tools.filter(t => STATE.progress[t.id]?.completed).length;
+  const inProgress = STATE.tools.filter(t => {
+    const p = STATE.progress[t.id];
+    return p && !p.completed && (p.started || (p.checklist && p.checklist.some(c => c)));
+  }).length;
+  const remainingTime = STATE.tools.filter(t => !STATE.progress[t.id]?.completed)
+    .reduce((s, t) => s + t.time, 0);
+  const pct = total ? Math.round((completed / total) * 100) : 0;
+
+  document.getElementById('stat-completed').textContent = completed;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-streak').textContent = STATE.streak?.count || 0;
+  document.getElementById('stat-time').textContent = remainingTime;
+  document.getElementById('stat-progress').textContent = pct;
+
+  const bb = document.getElementById('bookmark-badge');
+  if (STATE.bookmarks.length) {
+    bb.style.display = 'flex';
+    bb.textContent = STATE.bookmarks.length;
+  } else {
+    bb.style.display = 'none';
+  }
+}
+
+function renderFilters() {
+  const filters = [
+    { id: 'all', label: 'All', icon: 'grid-3x3' },
+    { id: 'beginner', label: 'Beginner', icon: 'sprout' },
+    { id: 'intermediate', label: 'Intermediate', icon: 'bar-chart' },
+    { id: 'advanced', label: 'Advanced', icon: 'rocket' },
+    { id: 'in-progress', label: 'In Progress', icon: 'loader' },
+    { id: 'completed', label: 'Completed', icon: 'trophy' },
+  ];
+
+  const counts = {
+    all: STATE.tools.length,
+    beginner: STATE.tools.filter(t => t.difficulty === 'beginner').length,
+    intermediate: STATE.tools.filter(t => t.difficulty === 'intermediate').length,
+    advanced: STATE.tools.filter(t => t.difficulty === 'advanced').length,
+    'in-progress': STATE.tools.filter(t => {
+      const p = STATE.progress[t.id];
+      return p && !p.completed && (p.started || (p.checklist && p.checklist.some(c => c)));
+    }).length,
+    completed: STATE.tools.filter(t => STATE.progress[t.id]?.completed).length,
+  };
+
+  document.getElementById('filters').innerHTML = filters.map(f => `
+    <div class="filter-chip ${STATE.currentFilter === f.id ? 'active' : ''}" onclick="setFilter('${f.id}')">
+      <i data-lucide="${f.icon}" style="width:14px;height:14px"></i>
+      <span>${f.label}</span>
+      <span class="count">${counts[f.id]}</span>
+    </div>
+  `).join('');
+}
+
+function renderTools() {
+  const grid = document.getElementById('tools-grid');
+  const filtered = STATE.tools.filter(t => {
+    if (STATE.currentFilter === 'all') return true;
+    if (STATE.currentFilter === 'in-progress') {
+      const p = STATE.progress[t.id];
+      return p && !p.completed && (p.started || (p.checklist && p.checklist.some(c => c)));
+    }
+    if (STATE.currentFilter === 'completed') return STATE.progress[t.id]?.completed;
+    return t.difficulty === STATE.currentFilter;
+  });
+
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <i data-lucide="inbox" style="width:48px;height:48px"></i>
+        <h3>Nothing here yet</h3>
+        <p>Try a different filter or start a new tool.</p>
+      </div>
+    `;
+    document.getElementById('tools-meta').textContent = '';
+    return;
+  }
+
+  document.getElementById('tools-meta').textContent = `${filtered.length} tool${filtered.length !== 1 ? 's' : ''}`;
+
+  grid.innerHTML = filtered.map(t => {
+    const p = STATE.progress[t.id] || {};
+    const completedSteps = p.checklist ? p.checklist.filter(c => c).length : 0;
+    const totalSteps = t.checklist.length;
+    const pct = totalSteps ? Math.round((completedSteps / totalSteps) * 100) : 0;
+    const isComplete = p.completed;
+    const isBookmarked = STATE.bookmarks.includes(t.id);
+
+    return `
+      <article class="tool-card ${isComplete ? 'completed' : ''}" style="--card-color:${t.color};--card-color-bg:${t.colorBg}" onclick="openDetail('${t.id}')">
+        <div class="card-header">
+          <div class="card-icon"><i data-lucide="${t.icon}" style="width:22px;height:22px"></i></div>
+          <button class="card-bookmark ${isBookmarked ? 'active' : ''}" onclick="event.stopPropagation();toggleBookmark('${t.id}')" aria-label="Bookmark">
+            <i data-lucide="bookmark" style="width:14px;height:14px"></i>
+          </button>
+        </div>
+        <h3>${t.title}</h3>
+        <p class="desc">${t.overview.split('\n')[0].substring(0, 140)}${t.overview.length > 140 ? '…' : ''}</p>
+        <div class="card-meta">
+          <span class="meta-tag difficulty-${t.difficulty}">${t.difficulty}</span>
+          <span class="meta-tag">${t.steps.length} steps</span>
+        </div>
+        ${totalSteps > 0 ? `
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+          <div class="progress-text">
+            <span>${completedSteps}/${totalSteps} tasks</span>
+            <span>${pct}%</span>
+          </div>
+        ` : `
+          <div class="card-footer">
+            <span class="time"><i data-lucide="clock" style="width:12px;height:12px"></i> ${t.time} hrs</span>
+            <button class="start-btn" onclick="event.stopPropagation();openDetail('${t.id}')">
+              Start <i data-lucide="arrow-right" style="width:12px;height:12px"></i>
+            </button>
+          </div>
+        `}
+      </article>
+    `;
+  }).join('');
+
+  if (window.lucide) lucide.createIcons();
+}
+
+// ============ DETAIL VIEW ============
+function openDetail(id) {
+  const tool = STATE.tools.find(t => t.id === id);
+  if (!tool) return;
+
+  STATE.currentToolId = id;
+  if (!STATE.progress[id]) {
+    STATE.progress[id] = { checklist: tool.checklist.map(() => false), started: true, completed: false, lastVisited: Date.now() };
+  } else {
+    STATE.progress[id].started = true;
+    STATE.progress[id].lastVisited = Date.now();
+  }
+  saveState();
+  updateStreak();
+
+  const isBookmarked = STATE.bookmarks.includes(id);
+  document.getElementById('detail-bookmark').classList.toggle('active', isBookmarked);
+
+  // Render markdown
+  const html = marked.parse(tool.content);
+  const detailContent = document.getElementById('detail-content');
+
+  const breadcrumb = `DevOps Hub / ${tool.title}`;
+  const metaTags = `
+    <span class="meta-tag difficulty-${tool.difficulty}">${tool.difficulty}</span>
+    <span class="meta-tag"><i data-lucide="clock" style="width:10px;height:10px;display:inline;vertical-align:middle"></i> ${tool.time} hours</span>
+    <span class="meta-tag"><i data-lucide="layers" style="width:10px;height:10px;display:inline;vertical-align:middle"></i> ${tool.steps.length} steps</span>
+  `;
+
+  const checklistHtml = tool.checklist.length ? `
+    <div class="checklist">
+      <div class="checklist-title">
+        <span><i data-lucide="check-square" style="width:14px;height:14px;display:inline;vertical-align:middle;margin-right:6px"></i> Practice Tasks</span>
+        <span class="checklist-progress" id="checklist-progress">0 / ${tool.checklist.length}</span>
+      </div>
+      ${tool.checklist.map((item, i) => `
+        <label class="checklist-item">
+          <input type="checkbox" ${STATE.progress[id].checklist[i] ? 'checked' : ''} onchange="toggleChecklist(${id ? `'${id}'` : id}, ${i}, this.checked)">
+          <span>${escapeHtml(item)}</span>
+        </label>
+      `).join('')}
+    </div>
+  ` : '';
+
+  detailContent.innerHTML = `
+    <div class="detail-hero">
+      <div class="breadcrumb">${breadcrumb}</div>
+      <h1>${escapeHtml(tool.title)}</h1>
+      <p class="lead">${escapeHtml(tool.overview)}</p>
+      <div class="hero-meta">${metaTags}</div>
+    </div>
+    <div class="markdown" id="markdown-body">${html}</div>
+    ${checklistHtml}
+  `;
+
+  // Process code blocks for copy buttons
+  detailContent.querySelectorAll('pre code').forEach(block => {
+    const pre = block.parentElement;
+    const lang = (block.className.match(/language-(\w+)/) || [, 'text'])[1];
+    const wrapper = document.createElement('div');
+    wrapper.className = 'code-block';
+    const header = document.createElement('div');
+    header.className = 'code-block-header';
+    header.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="code-block-dots"><span></span><span></span><span></span></div>
+        <div class="code-block-lang"><i data-lucide="terminal" style="width:11px;height:11px"></i> ${lang}</div>
+      </div>
+      <button class="copy-btn" onclick="copyCode(this)">
+        <i data-lucide="copy" style="width:11px;height:11px"></i> Copy
+      </button>
+    `;
+    const newPre = document.createElement('pre');
+    newPre.appendChild(block.cloneNode(true));
+    wrapper.appendChild(header);
+    wrapper.appendChild(newPre);
+    pre.replaceWith(wrapper);
+  });
+
+  document.getElementById('detail-view').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('detail-view').scrollTop = 0;
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeDetail() {
+  document.getElementById('detail-view').classList.remove('active');
+  document.body.style.overflow = '';
+  render();
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function toggleChecklist(toolId, idx, checked) {
+  if (!STATE.progress[toolId]) return;
+  STATE.progress[toolId].checklist[idx] = checked;
+  const tool = STATE.tools.find(t => t.id === toolId);
+  const total = tool.checklist.length;
+  const done = STATE.progress[toolId].checklist.filter(c => c).length;
+  const progressEl = document.getElementById('checklist-progress');
+  if (progressEl) progressEl.textContent = `${done} / ${total}`;
+  saveState();
+}
+
+function completeCurrentTool() {
+  const id = STATE.currentToolId;
+  if (!id) return;
+  if (!STATE.progress[id]) STATE.progress[id] = { checklist: [] };
+  STATE.progress[id].completed = !STATE.progress[id].completed;
+  showToast(STATE.progress[id].completed ? 'Marked as complete!' : 'Marked as incomplete');
+  saveState();
+  render();
+}
+
+function toggleDetailBookmark() {
+  if (!STATE.currentToolId) return;
+  toggleBookmark(STATE.currentToolId);
+  const isBookmarked = STATE.bookmarks.includes(STATE.currentToolId);
+  document.getElementById('detail-bookmark').classList.toggle('active', isBookmarked);
+}
+
+function toggleBookmark(id) {
+  const idx = STATE.bookmarks.indexOf(id);
+  if (idx > -1) {
+    STATE.bookmarks.splice(idx, 1);
+    showToast('Bookmark removed');
+  } else {
+    STATE.bookmarks.push(id);
+    showToast('Bookmarked');
+  }
+  saveState();
+  render();
+}
+
+function copyCode(btn) {
+  const code = btn.closest('.code-block').querySelector('code').textContent;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '<i data-lucide="check" style="width:11px;height:11px"></i> Copied';
+    showToast('Copied to clipboard');
+    if (window.lucide) lucide.createIcons();
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<i data-lucide="copy" style="width:11px;height:11px"></i> Copy';
+      if (window.lucide) lucide.createIcons();
+    }, 2000);
+  });
+}
+
+// ============ FILTERS / NAV ============
+function setFilter(f) {
+  STATE.currentFilter = f;
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  const tabMap = { 'all': 0, 'beginner': 1, 'in-progress': 2, 'completed': 3 };
+  const tabs = document.querySelectorAll('.tab-item');
+  if (tabMap[f] !== undefined && tabs[tabMap[f]]) tabs[tabMap[f]].classList.add('active');
+  // Also sync filter chip
+  renderFilters();
+  renderTools();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goHome() {
+  closeDetail();
+  closeAllSheets();
+  setFilter('all');
+}
+
+// ============ SEARCH ============
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('active');
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-results').innerHTML = '';
+  setTimeout(() => document.getElementById('search-input').focus(), 50);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSearch() {
+  document.getElementById('search-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function handleSearch(q) {
+  q = q.trim().toLowerCase();
+  const results = document.getElementById('search-results');
+  if (!q) {
+    results.innerHTML = `
+      <div style="padding:12px 20px;font-size:11px;color:var(--tertiary);text-transform:uppercase;letter-spacing:0.05em;font-weight:700">Recent & Suggested</div>
+      ${STATE.tools.slice(0, 5).map(t => `
+        <div class="search-result" onclick="openDetail('${t.id}');closeSearch()">
+          <div class="search-result-icon"><i data-lucide="${t.icon}" style="width:16px;height:16px"></i></div>
+          <div class="search-result-text">
+            <div class="search-result-title">${escapeHtml(t.title)}</div>
+            <div class="search-result-subtitle">${t.difficulty} • ${t.time} hrs</div>
+          </div>
+        </div>
+      `).join('')}
+    `;
+    if (window.lucide) lucide.createIcons();
+    return;
+  }
+
+  const matches = [];
+  STATE.tools.forEach(t => {
+    const haystack = (t.title + ' ' + t.overview + ' ' + t.why + ' ' + t.content).toLowerCase();
+    if (haystack.includes(q)) {
+      matches.push({ tool: t, score: haystack.split(q).length - 1 });
+    }
+  });
+  matches.sort((a, b) => b.score - a.score);
+
+  if (!matches.length) {
+    results.innerHTML = `<div class="search-empty">No results for "${escapeHtml(q)}"</div>`;
+    return;
+  }
+
+  results.innerHTML = matches.slice(0, 20).map(m => `
+    <div class="search-result" onclick="openDetail('${m.tool.id}');closeSearch()">
+      <div class="search-result-icon"><i data-lucide="${m.tool.icon}" style="width:16px;height:16px"></i></div>
+      <div class="search-result-text">
+        <div class="search-result-title">${highlight(m.tool.title, q)}</div>
+        <div class="search-result-subtitle">${m.tool.difficulty} • ${m.tool.time} hrs • ${m.score} match${m.score > 1 ? 'es' : ''}</div>
+      </div>
+    </div>
+  `).join('');
+  if (window.lucide) lucide.createIcons();
+}
+
+function highlight(text, q) {
+  const idx = text.toLowerCase().indexOf(q);
+  if (idx === -1) return escapeHtml(text);
+  return escapeHtml(text.slice(0, idx)) + '<mark style="background:var(--accent);color:white;padding:0 2px;border-radius:2px">' + escapeHtml(text.slice(idx, idx + q.length)) + '</mark>' + escapeHtml(text.slice(idx + q.length));
+}
+
+// ============ BOOKMARKS SHEET ============
+function openBookmarks() {
+  const list = document.getElementById('bookmarks-list');
+  if (!STATE.bookmarks.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="bookmark" style="width:48px;height:48px"></i>
+        <h3>No bookmarks yet</h3>
+        <p>Tap the bookmark icon on any tool to save it for later.</p>
+      </div>
+    `;
+  } else {
+    list.innerHTML = STATE.bookmarks.map(id => {
+      const t = STATE.tools.find(x => x.id === id);
+      if (!t) return '';
+      return `
+        <div style="display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;cursor:pointer" onclick="closeAllSheets();openDetail('${t.id}')">
+          <div style="width:40px;height:40px;background:${t.colorBg};color:${t.color};border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i data-lucide="${t.icon}" style="width:20px;height:20px"></i>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-weight:700;font-size:14px">${escapeHtml(t.title)}</div>
+            <div style="font-size:12px;color:var(--tertiary);margin-top:2px">${t.difficulty} • ${t.time} hrs</div>
+          </div>
+          <i data-lucide="chevron-right" style="width:18px;height:18px;color:var(--tertiary)"></i>
+        </div>
+      `;
+    }).join('');
+  }
+  document.getElementById('bookmarks-sheet').classList.add('active');
+  document.getElementById('sheet-backdrop').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  if (window.lucide) lucide.createIcons();
+}
+
+function openSettings() {
+  document.getElementById('settings-sheet').classList.add('active');
+  document.getElementById('sheet-backdrop').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.style.borderColor = b.dataset.theme === STATE.theme ? 'var(--accent)' : 'var(--border)';
+    b.style.color = b.dataset.theme === STATE.theme ? 'var(--accent)' : 'var(--primary)';
+  });
+  if (window.lucide) lucide.createIcons();
+}
+
+function closeAllSheets() {
+  document.querySelectorAll('.sheet').forEach(s => s.classList.remove('active'));
+  document.getElementById('sheet-backdrop').classList.remove('active');
+  if (!document.getElementById('detail-view').classList.contains('active') &&
+      !document.getElementById('search-overlay').classList.contains('active')) {
+    document.body.style.overflow = '';
+  }
+}
+
+// ============ THEME ============
+function setTheme(theme) {
+  STATE.theme = theme;
+  document.documentElement.setAttribute('data-theme', theme);
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.style.borderColor = b.dataset.theme === theme ? 'var(--accent)' : 'var(--border)';
+    b.style.color = b.dataset.theme === theme ? 'var(--accent)' : 'var(--primary)';
+  });
+  saveState();
+}
+
+// ============ STREAK ============
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (!STATE.streak) STATE.streak = { count: 0, lastDate: null };
+  if (STATE.streak.lastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (STATE.streak.lastDate === yesterday) {
+    STATE.streak.count = (STATE.streak.count || 0) + 1;
+  } else if (STATE.streak.lastDate !== today) {
+    STATE.streak.count = 1;
+  }
+  STATE.streak.lastDate = today;
+  saveState();
+  renderStats();
+}
+
+// ============ EXPORT / RESET ============
+function exportData() {
+  const data = {
+    progress: STATE.progress,
+    bookmarks: STATE.bookmarks,
+    streak: STATE.streak,
+    exportedAt: new Date().toISOString(),
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `devops-hub-progress-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Progress exported');
+}
+
+function resetProgress() {
+  if (!confirm('Reset all progress and bookmarks? This cannot be undone.')) return;
+  STATE.progress = {};
+  STATE.bookmarks = [];
+  STATE.streak = { count: 0, lastDate: null };
+  saveState();
+  closeAllSheets();
+  render();
+  showToast('Progress reset');
+}
+
+// ============ TOAST ============
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============ KEYBOARD ============
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeSearch();
+    if (document.getElementById('detail-view').classList.contains('active')) closeDetail();
+    else closeAllSheets();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    e.preventDefault();
+    openSearch();
+  }
+});
+
+// ============ INIT ============
+loadState();
+if (STATE.theme) document.documentElement.setAttribute('data-theme', STATE.theme);
+updateStreak();
+loadContent();
+handleSearch('');
+
+document.getElementById('search-input').addEventListener('input', e => handleSearch(e.target.value));
+document.querySelectorAll('.theme-btn').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.theme)));
+
+// Service worker for offline
+if ('serviceWorker' in navigator) {
+  // No SW file shipped, but cache via fetch is already done by browser
+}
+</script>
+</body>
+</html>
